@@ -57,10 +57,12 @@ class Interest:
         """
         Changes the number of compounds per year keeping constant annual nominal interest.
 
-        :param value:
+        :param new_compounds:
         :return:
         """
-        self._value = self._get_interest(self._value * self._compounds, new_compounds, "nominal")
+        self._value = self._get_interest(
+            self._value * self._compounds, new_compounds, "nominal"
+        )
         self._compounds = new_compounds
 
     def recompound(self, new_compounds: float) -> None:
@@ -70,7 +72,9 @@ class Interest:
         :param new_compounds:
         :return:
         """
-        self._value = self._get_interest(self._value ** self._compounds, new_compounds, "effective")
+        self._value = self._get_interest(
+            self._value**self._compounds, new_compounds, "effective"
+        )
         self._compounds = new_compounds
 
     def compounds_as_time(self) -> str:
@@ -110,7 +114,9 @@ class Interest:
         return
 
     def __eq__(self, other: Interest):
-        return (self.annual_effective_interest == other.annual_effective_interest) and (self.periodic_interest == other.periodic_interest)
+        return (self.annual_effective_interest == other.annual_effective_interest) and (
+            self.periodic_interest == other.periodic_interest
+        )
 
     def __repr__(self):
         return str(self.annual_effective_interest)
