@@ -7,3 +7,6 @@ black:
 test:
 	python -m mypy .
 	python -m pytest
+
+coverage:
+	python -m pytest --cov=. tests/
