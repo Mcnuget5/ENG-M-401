@@ -55,3 +55,6 @@ jobs:
       - name: Run test cases
         run: |
           python -m pytest
+          
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
