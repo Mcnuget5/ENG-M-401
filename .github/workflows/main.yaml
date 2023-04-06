@@ -1,0 +1,57 @@
+name: All
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  style:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install flake8
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install flake8
+
+      - name: Black code formatting compliance
+        uses: psf/black@stable
+
+      - name: flake8 code formatting compliance
+        run: |
+          python -m flake8 . --count --statistics
+
+  test:
+    strategy:
+      matrix:
+        python-version: [ "3.10", "3.11" ]
+        os: [ "ubuntu-latest", "macos-latest", "windows-latest" ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{matrix.python-version}}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Type checking
+        run: |
+          python -m mypy .
+
+      - name: Run test cases
+        run: |
+          python -m pytest

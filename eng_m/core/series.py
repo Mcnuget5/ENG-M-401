@@ -7,13 +7,15 @@ from __future__ import annotations
 
 import sympy
 
-from eng_m.util.exceptions import UnequalInterestError
 from eng_m.core.interest import Interest
+
+from eng_m.util.types import symbol
+from eng_m.util.exceptions import UnequalInterestError
 
 
 class Series:
     """
-    Defines a payment series with arbitrary payments per time step and arbitrary interest.
+    Defines a payment series with arbitrary payments per year and arbitrary interest.
 
     Parameters
     ----------
@@ -23,8 +25,8 @@ class Series:
 
     def __init__(
         self,
-        payment: list[float | sympy.core.mul | sympy.core.add, ...] = None,
-        interest: Interest = None,
+        payment: list[symbol],
+        interest: Interest,
         compounds: float = 1,
     ) -> None:
         self.payments = payment
@@ -54,7 +56,8 @@ class Series:
         """
         if self.interest != other.interest:
             raise UnequalInterestError(
-                "payment series must have equal annual effective interest and compounds per year"
+                "payment series must have equal annual effective interest and compounds"
+                "per year"
             )
         return Series(
             payment=self.payments + other.payments,
@@ -62,8 +65,18 @@ class Series:
             compounds=self.compounds,
         )
 
-    def end(self, period: int = None) -> float:
-        pass
+    def end(self, period: int) -> float:
+        """
+        TODO: this
+        Parameters
+        ----------
+        period
+
+        Returns
+        -------
+
+        """
+        return 0.0
 
     def equate(self, other: Series, symbol: sympy.Symbol) -> float:
         """
@@ -74,8 +87,18 @@ class Series:
         """
         return sympy.solve(self.npv - other.npv, symbol)
 
-    def start(self, period: int = None) -> float:
-        pass
+    def start(self, period: int) -> float:
+        """
+        TODO: this
+        Parameters
+        ----------
+        period
+
+        Returns
+        -------
+
+        """
+        return 0.0
 
     def __add__(self, other: Series) -> Series:
         """
@@ -87,8 +110,9 @@ class Series:
         """
         if self.interest != other.interest:
             raise UnequalInterestError(
-                "payment series must have equal annual effective interest and compounds per year"
+                "payment series must have equal annual effective interest and compounds"
+                "per year"
             )
-        return Series(payment=[self.payments])
+        return Series(payment=self.payments, interest=self.interest)
 
     net_present_value = npv

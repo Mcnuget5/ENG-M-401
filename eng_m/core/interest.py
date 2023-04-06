@@ -6,7 +6,7 @@ from eng_m.util.time import periods_to_time
 class Interest:
     def __init__(
         self,
-        interest: float = None,
+        interest: float,
         compounds: float = 1,
         interest_type: str = "nominal",
     ):
@@ -20,7 +20,8 @@ class Interest:
         compounds : float
             Number of times interest accumulates per year
         interest_type : str = "nominal"
-            Assumes `interest` is annual nominal if "nominal", `interest` is per period if "periodic", and `interest` is annual effective if "effective"
+            Assumes `interest` is annual nominal if "nominal", `interest` is per period
+            if "periodic", and `interest` is annual effective if "effective"
         """
         self._validate(interest, compounds, interest_type)
 
@@ -55,7 +56,8 @@ class Interest:
     @compounds.setter
     def compounds(self, new_compounds: float) -> None:
         """
-        Changes the number of compounds per year keeping constant annual nominal interest.
+        Changes the number of compounds per year keeping constant annual nominal
+        interest.
 
         :param new_compounds:
         :return:
@@ -67,7 +69,8 @@ class Interest:
 
     def recompound(self, new_compounds: float) -> None:
         """
-        Changes the number of compounds per year keeping constant annual effective interest.
+        Changes the number of compounds per year keeping constant annual effective
+        interest.
 
         :param new_compounds:
         :return:
@@ -82,8 +85,8 @@ class Interest:
 
         :return:
         """
-        if self._compounds in periods_to_time:
-            return periods_to_time[self._compounds]
+        if int(self._compounds) in periods_to_time:
+            return periods_to_time[int(self._compounds)]
         return str(round(365 / self._compounds, 2)) + "days"
 
     @staticmethod
@@ -113,7 +116,9 @@ class Interest:
             raise ValueError("interest type must be `periodic` or `nominal`")
         return
 
-    def __eq__(self, other: Interest):
+    def __eq__(self, other: object):
+        if not isinstance(other, Interest):
+            return NotImplemented
         return (self.annual_effective_interest == other.annual_effective_interest) and (
             self.periodic_interest == other.periodic_interest
         )
