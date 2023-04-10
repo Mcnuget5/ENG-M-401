@@ -6,4 +6,5 @@ exclude =
     __pycache__,
     .git,
     api.py,
-    venv
+    venv,
+    __init__.py

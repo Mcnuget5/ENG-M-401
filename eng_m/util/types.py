@@ -3,7 +3,7 @@ import sympy
 from typing import Union
 
 
-symbol = Union[
+expression = Union[
     sympy.core.mul.Mul,
     sympy.core.add.Add,
     sympy.core.symbol.Symbol,
@@ -11,3 +11,18 @@ symbol = Union[
     int,
     float,
 ]
+
+optional = Union[
+    int,
+    float,
+    None,
+]
+
+unsolved = Union[
+    sympy.core.mul.Mul,
+    sympy.core.add.Add,
+    sympy.core.symbol.Symbol,
+    sympy.core.power.Pow,
+]
+
+numeric = Union[int, float]

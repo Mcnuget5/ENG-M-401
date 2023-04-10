@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from eng_m.util.time import periods_to_time
+from eng_m.util.maps import periods_to_time
+from eng_m.util.types import expression
 
 
 class Interest:
     def __init__(
         self,
-        interest: float,
+        interest: expression,
         compounds: float = 1,
         interest_type: str = "nominal",
     ):
@@ -29,21 +30,21 @@ class Interest:
         self._value = self._get_interest(interest, compounds, interest_type)
 
     @property
-    def annual_effective_interest(self) -> float:
+    def annual_effective_interest(self) -> expression:
         """
         Returns the annual effective interest rate.
         """
         return (1 + self._value) ** self._compounds - 1
 
     @property
-    def annual_nominal_interest(self) -> float:
+    def annual_nominal_interest(self) -> expression:
         """
         Returns the annual nominal interest rate.
         """
         return self._value * self._compounds
 
     @property
-    def periodic_interest(self) -> float:
+    def periodic_interest(self) -> expression:
         """
         Returns the interest per period.
         """
@@ -76,7 +77,7 @@ class Interest:
         :return:
         """
         self._value = self._get_interest(
-            self._value**self._compounds, new_compounds, "effective"
+            self.annual_effective_interest, new_compounds, "effective"
         )
         self._compounds = new_compounds
 
@@ -90,7 +91,9 @@ class Interest:
         return str(round(365 / self._compounds, 2)) + "days"
 
     @staticmethod
-    def _get_interest(interest: float, compounds: float, interest_type: str) -> float:
+    def _get_interest(
+        interest: expression, compounds: float, interest_type: str
+    ) -> expression:
         """
 
         :param interest:
@@ -101,19 +104,21 @@ class Interest:
         if interest_type == "nominal":
             return interest / compounds
         if interest_type == "effective":
-            return interest ** (1 / compounds)
+            return (1 + interest) ** (1 / compounds) - 1
         return interest
 
     @staticmethod
-    def _validate(interest: float, compounds: float, interest_type: str) -> None:
+    def _validate(interest: expression, compounds: float, interest_type: str) -> None:
         if interest < 0.0:
             raise ValueError("negative interest not supported")
         if compounds < 1:
             raise ValueError(
                 "interest compounds rarer than once per annum not supported"
             )
-        if interest_type not in ("periodic", "nominal"):
-            raise ValueError("interest type must be `periodic` or `nominal`")
+        if interest_type not in ("periodic", "nominal", "effective"):
+            raise ValueError(
+                "interest type must be `periodic`, `nominal`, or `effective`"
+            )
         return
 
     def __eq__(self, other: object):
