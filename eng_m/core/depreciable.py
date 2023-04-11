@@ -1,6 +1,6 @@
-from typing import Optional
+from __future__ import annotations
 
-from eng_m.util.types import expression
+from eng_m.util.types import expression, numeric
 
 from eng_m.util.maps import cca_rates
 
@@ -11,7 +11,7 @@ class Depreciable:
         principal_value: expression,
         salvage_value: expression,
         useful_life: int,
-        cca: float = 0.0,
+        cca: numeric = 0.0,
         depreciation_class: bool = False,
     ) -> None:
         """
@@ -35,7 +35,10 @@ class Depreciable:
 
     @property
     def soyd(self) -> int:
-        return sum([i for i in range(self.useful_life)])
+        return sum([i + 1 for i in range(self.useful_life)])
+
+    def book_value(self, period: int, method: str = "straight-line"):
+        return self.principal_value - self.depreciation(period, method)
 
     def cca(self, period: int, cumulative: bool = False) -> expression:
         """
@@ -56,9 +59,7 @@ class Depreciable:
             * ((1 - self.cca_rate) ** (period - 2))
         )
 
-    def depreciation(
-        self, period: int, method: str = "straight-line"
-    ) -> Optional[expression]:
+    def depreciation(self, period: int, method: str = "straight-line") -> expression:
         """
         Returns the amount of depreciation of an asset in period
 
@@ -68,16 +69,25 @@ class Depreciable:
         method
         """
         if method == "straight-line":
-            return (self.principal_value - self.salvage_value) * period
+            return (
+                (self.principal_value - self.salvage_value) * period / self.useful_life
+            )
         elif method == "soyd":
             return (
-                (self.useful_life - period)
+                (sum([self.useful_life - i for i in range(period)]))
                 / self.soyd
                 * (self.principal_value - self.salvage_value)
             )
         return NotImplemented
 
     def disposal_tax_effect(self, tax_rate: float) -> expression:
+        """
+        Returns the amount of tax benefits or costs provided by asset disposal.
+        """
+        if self.salvage_value > self.principal_value:
+            return (-self.cca(self.useful_life, cumulative=True)) * tax_rate - (
+                0.5 * tax_rate
+            ) * (self.salvage_value - self.principal_value)
         return (
             (self.principal_value - self.cca(self.useful_life, cumulative=True))
             - self.salvage_value

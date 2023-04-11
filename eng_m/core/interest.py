@@ -109,8 +109,6 @@ class Interest:
 
     @staticmethod
     def _validate(interest: expression, compounds: float, interest_type: str) -> None:
-        if interest < 0.0:
-            raise ValueError("negative interest not supported")
         if compounds < 1:
             raise ValueError(
                 "interest compounds rarer than once per annum not supported"

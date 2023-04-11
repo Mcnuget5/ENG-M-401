@@ -6,9 +6,10 @@ from eng_m.core.series import Series
 from typing import Optional, Sequence
 
 from eng_m.util.types import expression
+from eng_m.util.exceptions import NoBuenoSeriesMuchasGraciasError
 
 
-class Project:
+class Project(Series):
     def __init__(
         self,
         revenue: Sequence[expression],
@@ -21,23 +22,18 @@ class Project:
         """
         Projects at minimum have a revenue payment series and admit an operating cost
         series, a loan, and a depreciable item.
-
-        # TODO: MAKE SURE WHEN U USE, EVERYTHING IS EQUAL LENGTH. THIS IS NOT CHECKED
-                FOR U.
         """
-        self._assert_equal_lengths()
         self.revenues = revenue
         self.cost = cost
         self.loan = loan
         self.depreciable = depreciable
         self.tax_rate = tax_rate
         self.marr = marr
-
-    @property
-    def eaw(self) -> expression:
-        return Series(
-            [self.net_cash_flow(i) for i in range(len(self.revenues))], self.marr
-        ).npv
+        self._assert_equal_lengths()
+        super().__init__(
+            [self.net_cash_flow(i) for i in range(len(self.revenues))],
+            interest=self.marr,
+        )
 
     def net_cash_flow(self, period: int) -> expression:
         net = self.net_income(period)
@@ -73,4 +69,14 @@ class Project:
         return self.ebit(period) * self.tax_rate
 
     def _assert_equal_lengths(self):
-        pass
+        if self.cost is not None:
+            if len(self.cost) != len(self.revenues):
+                raise NoBuenoSeriesMuchasGraciasError("revenue and cost unequal length")
+        if self.loan is not None:
+            if len(self.loan) != len(self.revenues):
+                raise NoBuenoSeriesMuchasGraciasError("revenue and loan unequal length")
+        if self.depreciable is not None:
+            if self.depreciable.useful_life + 1 != len(self.revenues):
+                raise NoBuenoSeriesMuchasGraciasError(
+                    "revenue and depreciable unequal length"
+                )

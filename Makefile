@@ -8,7 +8,7 @@ test:
 	python -m pytest
 
 types:
-	python -m mypy .
+	python -m mypy ./eng_m/ ./tests/
 
 coverage:
 	python -m pytest --cov=. tests/
