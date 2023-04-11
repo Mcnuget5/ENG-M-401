@@ -53,3 +53,31 @@ def test_l11_q1() -> None:
     x = sympy.Symbol("x")
     maint = eng_m.Series([x, -1000, -1250, -1500, -1750, -2000], interest)
     print(maint.zero(x))
+
+
+def test_l24_q3() -> None:
+    """
+    stuff
+    """
+    x = sympy.Symbol("x")
+    loan = eng_m.Loan(100000, x, eng_m.Interest(0.1), length=4, compounds=1)
+    loan.subs({x: loan.zero(x)})
+    depreciable = eng_m.Depreciable(200000, 30000, 4, 0.3)
+    revenue = [0] + [100000 for _ in range(4)]
+    project = eng_m.Project(
+        revenue=revenue,
+        loan=loan,
+        depreciable=depreciable,
+        tax_rate=0.35,
+        marr=eng_m.Interest(0.15),
+    )
+    assert project.net_cash_flow(0) == pytest.approx(-100000, abs=1)
+    assert project.net_cash_flow(1) == pytest.approx(47453, abs=1)
+    assert project.net_cash_flow(2) == pytest.approx(54049, abs=1)
+    assert project.net_cash_flow(3) == pytest.approx(47864, abs=1)
+    assert project.net_cash_flow(4) == pytest.approx(83112, abs=1)
+    assert project.net_income(0) == pytest.approx(0, abs=1)
+    assert project.net_income(1) == pytest.approx(39000, abs=1)
+    assert project.net_income(2) == pytest.approx(26751, abs=1)
+    assert project.net_income(3) == pytest.approx(38236, abs=1)
+    assert project.net_income(4) == pytest.approx(46892, abs=1)

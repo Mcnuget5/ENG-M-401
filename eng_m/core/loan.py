@@ -3,7 +3,7 @@ import sympy
 from eng_m.core.series import Series
 from eng_m.core.interest import Interest
 
-from eng_m.util.types import expression, numeric
+from eng_m.util.types import expression
 from eng_m.util.exceptions import NoBuenoSeriesMuchasGraciasError
 
 from typing import Union, Optional, get_args
@@ -22,7 +22,7 @@ class Loan(Series):
             super().__init__([-principal] + payment, interest, compounds)
         elif isinstance(payment, get_args(expression)) and isinstance(length, int):
             super().__init__(
-                [-principal] + [payment for _ in range(length)], interest, compounds  # type: ignore
+                [-principal] + [payment for _ in range(length)], interest, compounds
             )
         else:
             raise NoBuenoSeriesMuchasGraciasError("what")
@@ -52,13 +52,32 @@ class Loan(Series):
                 return i
         return None
 
-    def principals(self, variable: Optional[sympy.Symbol] = None) -> list[numeric]:
+    def principals(
+        self, variable: Optional[sympy.Symbol] = None, delta: bool = False
+    ) -> list[expression]:
         """
         # todo: rly slow. easily fixable with a top-down dp approach.
         """
         if variable is not None:
             self.subs({variable: self.zero(variable)})
+        if delta:
+            principals = self.principals()
+            return [self.payments[0]] + [
+                principals[i + 1] - principals[i] for i in range(len(principals) - 1)
+            ]
         return [self.start(i) for i in range(len(self.payments))]
 
-    def interests(self, variable: Optional[sympy.Symbol] = None) -> list[numeric]:
-        pass
+    def interests(self, variable: Optional[sympy.Symbol] = None) -> list[expression]:
+        """
+        # todo: little janky but works for all realistic test cases :3
+        """
+        if variable is not None:
+            principals = self.principals(variable)
+        else:
+            principals = self.principals()
+
+        interest = []
+        for i, j in enumerate(principals):
+            interest.append(self.interest.periodic_interest * j)
+
+        return [0] + interest[:-1]
