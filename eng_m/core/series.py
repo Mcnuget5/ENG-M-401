@@ -37,7 +37,30 @@ class Series:
         self.compounds = compounds
 
     @property
-    def nfv(self) -> numeric:
+    def irr(self):
+        return NotImplemented
+
+    @property
+    def eaw(self) -> expression:
+        if self._effective_interest() == 0.0:
+            return self.npv / len(self.payments) * self.compounds
+        return (
+            self.npv
+            * (
+                self._effective_interest()
+                * (1 + self._effective_interest()) ** (len(self.payments) - 1)
+            )
+            / ((1 + self._effective_interest()) ** (len(self.payments) - 1) - 1)
+        )
+
+    @property
+    def acceptability(self) -> bool:
+        if self.npv > 0:
+            return True
+        return False
+
+    @property
+    def nfv(self) -> expression:
         """
         Returns the net final value of a payment series
 
@@ -54,7 +77,7 @@ class Series:
         )
 
     @property
-    def npv(self) -> numeric:
+    def npv(self) -> expression:
         """
         Returns the net present value of a payment series.
 

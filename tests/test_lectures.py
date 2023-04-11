@@ -55,6 +55,58 @@ def test_l11_q1() -> None:
     print(maint.zero(x))
 
 
+def test_l24_q1() -> None:
+    """
+    You purchase a class 8 asset costing $100,000 with 6 useful years and zero
+    salvage value. It generates $300,000 per year, and costs $150,000 in labour
+    and materials. At 40% marginal tax rate and a 12% minimum acceptable rate
+    of return, is this purchase viable?
+    """
+    asset = eng_m.Depreciable(100000, 0, 6, cca=8, cca_class=True)
+    revenues = [0, 300000, 300000, 300000, 300000, 300000, 300000]
+    costs = [0, 150000, 150000, 150000, 150000, 150000, 150000]
+    project = eng_m.Project(
+        revenues,
+        cost=costs,
+        depreciable=[asset],
+        tax_rate=0.4,
+        marr=eng_m.Interest(0.12),
+    )
+    assert project.npv == pytest.approx(295929, abs=1)
+    assert project.net_cash_flow(3) == pytest.approx(95760, abs=1)
+    assert project.net_income(5) == pytest.approx(84470, abs=1)
+    assert project.ebit(6) == pytest.approx(142627, abs=1)
+
+
+def test_l24_q2() -> None:
+    """
+    You purchase the following:
+    Equipment: $600,000, useful for 4 years, $200,000 salvage value, CCA class 43
+    Building: $1,200,000, useful for 4 years, $600,000 salvage value, 4% CCA rate
+    Land: $200,000, useful for 4 years, $300,000 salvage value, 0% CCA rate.
+    You generate $900,000 in revenue per year and spend $250,000 in operating costs.
+    At 40% tax and 17% minimal acceptable rate of return, is this a viable investment?
+    """
+    equipment = eng_m.Depreciable(600000, 200000, 4, cca=43, cca_class=True)
+    building = eng_m.Depreciable(1200000, 600000, 4, cca=0.04)
+    land = eng_m.Depreciable(200000, 300000, 4)
+    revenues = [0, 900000, 900000, 900000, 900000]
+    costs = [0, 250000, 250000, 250000, 250000]
+    project = eng_m.Project(
+        revenues,
+        cost=costs,
+        depreciable=[equipment, building, land],
+        tax_rate=0.4,
+        marr=eng_m.Interest(0.17),
+    )
+    assert project.ebit(2) == pytest.approx(449960, abs=1)
+    assert project.net_cash_flow(3) == pytest.approx(450903, abs=1)
+    assert project.net_income(4) == pytest.approx(319007, abs=1)
+    # no, this is not a viable investment.
+    assert project.npv < 0
+    assert project.eaw < 0
+
+
 def test_l24_q3() -> None:
     """
     stuff
@@ -67,7 +119,7 @@ def test_l24_q3() -> None:
     project = eng_m.Project(
         revenue=revenue,
         loan=loan,
-        depreciable=depreciable,
+        depreciable=[depreciable],
         tax_rate=0.35,
         marr=eng_m.Interest(0.15),
     )

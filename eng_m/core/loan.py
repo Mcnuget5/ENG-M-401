@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import sympy
 
 from eng_m.core.series import Series
