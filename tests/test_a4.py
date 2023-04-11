@@ -29,7 +29,7 @@ def test_q1a() -> None:
     # Method B: loan class
     y = sympy.Symbol("y")
     interest = eng_m.Interest(0.0866, compounds=2, interest_type="nominal")
-    loan = eng_m.Loan(-220000 * 0.9, y, interest, length=20 * 12, compounds=12)
+    loan = eng_m.Loan(220000 * 0.9, y, interest, length=20 * 12, compounds=12)
     assert loan.zero(y) == pytest.approx(1719.26, abs=0.01)
 
 
@@ -57,7 +57,7 @@ def test_q1b() -> None:
     # Method B: loan class
     y = sympy.Symbol("y")
     interest = eng_m.Interest(0.1131, compounds=2, interest_type="nominal")
-    loan = eng_m.Loan(-220000 * 0.9, y, interest, length=30 * 12, compounds=12)
+    loan = eng_m.Loan(220000 * 0.9, y, interest, length=30 * 12, compounds=12)
     assert loan.zero(y) == pytest.approx(1893.44, abs=0.01)
 
 
@@ -67,8 +67,8 @@ def test_q2() -> None:
     loan balance after the 3rd payment is made?
     """
     interest = eng_m.Interest(0.092)
-    loan = eng_m.Loan(10000, -2000, interest, length=3, compounds=1)
-    assert loan.start(3) == pytest.approx(6452.78, abs=0.01)
+    loan = eng_m.Loan(10000, 2000, interest, length=3, compounds=1)
+    assert loan.start(3) == pytest.approx(-6452.78, abs=0.01)
 
 
 def test_q3() -> None:
@@ -78,7 +78,7 @@ def test_q3() -> None:
     """
     interest = eng_m.Interest(0.1)
     loan = eng_m.Loan(
-        -127500,
+        127500,
         [6667, 11250, 15000, 33750, 37500, 45750, 54000, 62250, 70500, 78750],
         interest,
         compounds=1,

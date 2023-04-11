@@ -19,10 +19,10 @@ class Loan(Series):
         compounds: int = 12,
     ):
         if isinstance(payment, list) and length is None:
-            super().__init__([principal] + payment, interest, compounds)
+            super().__init__([-principal] + payment, interest, compounds)
         elif isinstance(payment, get_args(expression)) and isinstance(length, int):
             super().__init__(
-                [principal] + [payment for _ in range(length)], interest, compounds  # type: ignore
+                [-principal] + [payment for _ in range(length)], interest, compounds  # type: ignore
             )
         else:
             raise NoBuenoSeriesMuchasGraciasError("what")
@@ -35,7 +35,7 @@ class Loan(Series):
         """
         sum = 0
         for i, j in enumerate(self.payments):
-            sum += j
+            sum += j  # type: ignore
             if sum > -0.000001:
                 return i
         return None
@@ -59,3 +59,6 @@ class Loan(Series):
         if variable is not None:
             self.subs({variable: self.zero(variable)})
         return [self.start(i) for i in range(len(self.payments))]
+
+    def interests(self, variable: Optional[sympy.Symbol] = None) -> list[numeric]:
+        pass

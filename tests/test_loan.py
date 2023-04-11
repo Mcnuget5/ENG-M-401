@@ -12,7 +12,7 @@ def test_variable_principal() -> None:
     """
     n = sympy.Symbol("n")
     interest = eng_m.Interest(0.3, compounds=12, interest_type="nominal")
-    loan = eng_m.Loan(-n, 1000, interest, 10, compounds=1)
+    loan = eng_m.Loan(n, 1000, interest, 10, compounds=1)
     assert loan.zero(n) == pytest.approx(2749.70, abs=0.01)
 
 
@@ -23,5 +23,5 @@ def test_variable_payment() -> None:
     """
     n = sympy.Symbol("n")
     interest = eng_m.Interest(0.001, compounds=365, interest_type="periodic")
-    loan = eng_m.Loan(-883389, n, interest, 10, compounds=2)
+    loan = eng_m.Loan(883389, n, interest, 10, compounds=2)
     assert loan.zero(n) == pytest.approx(210783.29, abs=0.01)
