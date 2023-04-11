@@ -89,3 +89,16 @@ def test_capital_recovery_worthlessness() -> None:
     print(series)
     assert series.npv == pytest.approx(0, abs=0.0001)
     assert series.nfv == pytest.approx(0, abs=0.0001)
+
+
+def test_geometric_gradient_series() -> None:
+    """
+    Tests that the geometric gradient series function returns what's expected
+    """
+    series = eng_m.series.geometric_gradient(1000, 1.1, 5, eng_m.Interest(0.1))
+    assert series.payments[0] == pytest.approx(0, abs=0.01)
+    assert series.payments[1] == pytest.approx(1000, abs=0.01)
+    assert series.payments[2] == pytest.approx(1100, abs=0.01)
+    assert series.payments[3] == pytest.approx(1210, abs=0.01)
+    assert series.payments[4] == pytest.approx(1331, abs=0.01)
+    assert series.payments[5] == pytest.approx(1464.1, abs=0.01)

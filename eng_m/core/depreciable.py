@@ -78,7 +78,7 @@ class Depreciable:
                 / self.soyd
                 * (self.principal_value - self.salvage_value)
             )
-        return NotImplemented
+        raise NotImplementedError()
 
     def disposal_tax_effect(self, tax_rate: float) -> expression:
         """

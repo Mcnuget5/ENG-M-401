@@ -59,9 +59,6 @@ class Interest:
         """
         Changes the number of compounds per year keeping constant annual nominal
         interest.
-
-        :param new_compounds:
-        :return:
         """
         self._value = self._get_interest(
             self._value * self._compounds, new_compounds, "nominal"
@@ -72,9 +69,6 @@ class Interest:
         """
         Changes the number of compounds per year keeping constant annual effective
         interest.
-
-        :param new_compounds:
-        :return:
         """
         self._value = self._get_interest(
             self.annual_effective_interest, new_compounds, "effective"
@@ -83,8 +77,7 @@ class Interest:
 
     def compounds_as_time(self) -> str:
         """
-
-        :return:
+        Returns the amount of compounds per year as a familiar unit
         """
         if int(self._compounds) in periods_to_time:
             return periods_to_time[int(self._compounds)]
@@ -95,11 +88,7 @@ class Interest:
         interest: expression, compounds: float, interest_type: str
     ) -> expression:
         """
-
-        :param interest:
-        :param compounds:
-        :param interest_type:
-        :return:
+        Returns the effective interest per period of this series.
         """
         if interest_type == "nominal":
             return interest / compounds
@@ -109,6 +98,8 @@ class Interest:
 
     @staticmethod
     def _validate(interest: expression, compounds: float, interest_type: str) -> None:
+        if interest < 0.0:
+            raise ValueError("negative interest not supported")
         if compounds < 1:
             raise ValueError(
                 "interest compounds rarer than once per annum not supported"

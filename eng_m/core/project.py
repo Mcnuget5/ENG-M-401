@@ -13,9 +13,9 @@ class Project(Series):
     def __init__(
         self,
         revenue: Sequence[expression],
-        cost: Optional[list[expression]] = None,
+        cost: Optional[Sequence[expression]] = None,
         loan: Optional[Loan] = None,
-        depreciable: Optional[Depreciable] = None,
+        depreciable: Optional[Sequence[Depreciable]] = None,
         tax_rate: float = 0.0,
         marr: Interest = Interest(0.0),
     ) -> None:
@@ -26,7 +26,7 @@ class Project(Series):
         self.revenues = revenue
         self.cost = cost
         self.loan = loan
-        self.depreciable = depreciable
+        self.depreciables = depreciable
         self.tax_rate = tax_rate
         self.marr = marr
         self._assert_equal_lengths()
@@ -38,12 +38,14 @@ class Project(Series):
     def net_cash_flow(self, period: int) -> expression:
         net = self.net_income(period)
 
-        if self.depreciable is not None:
+        if self.depreciables is not None:
             if period == 0:
-                net -= self.depreciable.principal_value
-            if period == self.depreciable.useful_life:
-                net += self.depreciable.net_salvage_value(self.tax_rate)
-            net += self.depreciable.cca(period)
+                net -= sum([i.principal_value for i in self.depreciables])
+            if period == self.depreciables[0].useful_life:
+                net += sum(
+                    [i.net_salvage_value(self.tax_rate) for i in self.depreciables]
+                )
+            net += sum([i.cca(period) for i in self.depreciables])
 
         if self.loan is not None:
             net -= self.loan.principals(delta=True)[period]
@@ -60,8 +62,8 @@ class Project(Series):
             costs += self.cost[period]
         if self.loan is not None:
             costs -= self.loan.interests()[period]
-        if self.depreciable is not None:
-            costs += self.depreciable.cca(period)
+        if self.depreciables is not None:
+            costs += sum([i.cca(period) for i in self.depreciables])
 
         return self.revenues[period] - costs
 
@@ -75,8 +77,10 @@ class Project(Series):
         if self.loan is not None:
             if len(self.loan) != len(self.revenues):
                 raise NoBuenoSeriesMuchasGraciasError("revenue and loan unequal length")
-        if self.depreciable is not None:
-            if self.depreciable.useful_life + 1 != len(self.revenues):
+        if self.depreciables is not None:
+            if any(
+                [i.useful_life + 1 != len(self.revenues) for i in self.depreciables]
+            ):
                 raise NoBuenoSeriesMuchasGraciasError(
                     "revenue and depreciable unequal length"
                 )
