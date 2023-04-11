@@ -12,7 +12,7 @@ class Depreciable:
         salvage_value: expression,
         useful_life: int,
         cca: numeric = 0.0,
-        depreciation_class: bool = False,
+        cca_class: bool = False,
     ) -> None:
         """
         Defines a depreciating asset.
@@ -23,12 +23,12 @@ class Depreciable:
         salvage_value
         useful_life
         cca
-        depreciation_class
+        cca_class
         """
         self.principal_value = principal_value
         self.salvage_value = salvage_value
         self.useful_life = useful_life
-        if depreciation_class:
+        if cca_class:
             self.cca_rate = cca_rates[cca]
         else:
             self.cca_rate = cca

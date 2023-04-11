@@ -69,7 +69,7 @@ def test_q6() -> None:
     capital cost allowance each year for the first 5 years, using the half-year
     convention.
     """
-    depreciable = eng_m.Depreciable(429350, 0, 100, cca=1, depreciation_class=True)
+    depreciable = eng_m.Depreciable(429350, 0, 100, cca=1, cca_class=True)
     assert depreciable.cca(0) == pytest.approx(0, abs=0.01)
     assert depreciable.cca(1) == pytest.approx(8587.00, abs=0.01)
     assert depreciable.cca(2) == pytest.approx(16830.52, abs=0.01)

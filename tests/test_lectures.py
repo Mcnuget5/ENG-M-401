@@ -62,7 +62,7 @@ def test_l24_q1() -> None:
     and materials. At 40% marginal tax rate and a 12% minimum acceptable rate
     of return, is this purchase viable?
     """
-    asset = eng_m.Depreciable(100000, 0, 6, cca=8, depreciation_class=True)
+    asset = eng_m.Depreciable(100000, 0, 6, cca=8, cca_class=True)
     revenues = [0, 300000, 300000, 300000, 300000, 300000, 300000]
     costs = [0, 150000, 150000, 150000, 150000, 150000, 150000]
     project = eng_m.Project(
@@ -87,7 +87,7 @@ def test_l24_q2() -> None:
     You generate $900,000 in revenue per year and spend $250,000 in operating costs.
     At 40% tax and 17% minimal acceptable rate of return, is this a viable investment?
     """
-    equipment = eng_m.Depreciable(600000, 200000, 4, cca=43, depreciation_class=True)
+    equipment = eng_m.Depreciable(600000, 200000, 4, cca=43, cca_class=True)
     building = eng_m.Depreciable(1200000, 600000, 4, cca=0.04)
     land = eng_m.Depreciable(200000, 300000, 4)
     revenues = [0, 900000, 900000, 900000, 900000]

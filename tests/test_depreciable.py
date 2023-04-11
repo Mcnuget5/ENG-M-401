@@ -9,7 +9,7 @@ def test_positive_asset_disposal() -> None:
     at end of year 4. What are your tax credits (debits) on asset disposal at
     30% marginal tax rate?
     """
-    depreciable = eng_m.Depreciable(5000, 500, 4, cca=6, depreciation_class=True)
+    depreciable = eng_m.Depreciable(5000, 500, 4, cca=6, cca_class=True)
     assert depreciable.disposal_tax_effect(0.3) == pytest.approx(888.82, abs=0.01)
 
 
@@ -19,7 +19,7 @@ def test_negative_asset_disposal() -> None:
     at the end of year 6. What are your tax credits (debits) on asset disposal
     at 70% marginal tax rate?
     """
-    depreciable = eng_m.Depreciable(5000, 900, 6, cca=50, depreciation_class=True)
+    depreciable = eng_m.Depreciable(5000, 900, 6, cca=50, cca_class=True)
     assert depreciable.disposal_tax_effect(0.7) == pytest.approx(-583.18, abs=0.01)
 
 
