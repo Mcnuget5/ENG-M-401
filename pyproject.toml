@@ -10,7 +10,7 @@ authors = [
 ]
 description = "Tools for the University of Alberta's ENG M 401 class."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 license = {text = "MIT"}
 dependencies = [
     "sympy >= 1.11.1",
