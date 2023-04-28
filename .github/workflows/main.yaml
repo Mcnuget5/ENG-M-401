@@ -32,7 +32,7 @@ jobs:
   test:
     strategy:
       matrix:
-        python-version: [ "3.10", "3.11" ]
+        python-version: [ "3.9", "3.10", "3.11" ]
         os: [ "ubuntu-latest", "windows-latest", "macos-latest" ]
     runs-on: ${{ matrix.os }}
     steps:
@@ -55,7 +55,8 @@ jobs:
 
       - name: Run test cases
         run: |
-          python -m pytest --cov-report html --cov=. tests/
+          python -m pytest --cov-report html --cov=./eng_m/ tests/
 
       - name: Upload coverage reports
         uses: codecov/codecov-action@v3
+        if: matrix.os == "ubuntu-latest" && matrix.python-version == "3.11"

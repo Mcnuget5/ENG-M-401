@@ -11,7 +11,7 @@ types:
 	python -m mypy ./eng_m/ ./tests/
 
 coverage:
-	python -m pytest --cov-report html --cov=. tests/
+	python -m pytest --cov-report html --cov=./eng_m/ tests/
 
 style: black lint
 
