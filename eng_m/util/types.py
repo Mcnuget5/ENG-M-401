@@ -12,12 +12,6 @@ expression = Union[
     float,
 ]
 
-optional = Union[
-    int,
-    float,
-    None,
-]
-
 unsolved = Union[
     sympy.core.mul.Mul,
     sympy.core.add.Add,

@@ -6,7 +6,7 @@ from eng_m.core.series import Series
 from eng_m.core.interest import Interest
 
 from eng_m.util.types import expression
-from eng_m.util.exceptions import NoBuenoSeriesMuchasGraciasError
+from eng_m.util.exceptions import InvalidSeriesError
 
 from typing import Union, Optional, get_args
 
@@ -27,7 +27,7 @@ class Loan(Series):
                 [-principal] + [payment for _ in range(length)], interest, compounds
             )
         else:
-            raise NoBuenoSeriesMuchasGraciasError("what")
+            raise InvalidSeriesError("what")
 
     @property
     def conventional_payback(self) -> Optional[int]:

@@ -6,7 +6,7 @@ from eng_m.core.series import Series
 from typing import Optional, Sequence
 
 from eng_m.util.types import expression
-from eng_m.util.exceptions import NoBuenoSeriesMuchasGraciasError
+from eng_m.util.exceptions import InvalidSeriesError
 
 
 class Project(Series):
@@ -73,14 +73,12 @@ class Project(Series):
     def _assert_equal_lengths(self):
         if self.cost is not None:
             if len(self.cost) != len(self.revenues):
-                raise NoBuenoSeriesMuchasGraciasError("revenue and cost unequal length")
+                raise InvalidSeriesError("revenue and cost unequal length")
         if self.loan is not None:
             if len(self.loan) != len(self.revenues):
-                raise NoBuenoSeriesMuchasGraciasError("revenue and loan unequal length")
+                raise InvalidSeriesError("revenue and loan unequal length")
         if self.depreciables is not None:
             if any(
                 [i.useful_life + 1 != len(self.revenues) for i in self.depreciables]
             ):
-                raise NoBuenoSeriesMuchasGraciasError(
-                    "revenue and depreciable unequal length"
-                )
+                raise InvalidSeriesError("revenue and depreciable unequal length")

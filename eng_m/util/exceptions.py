@@ -6,6 +6,6 @@ class InvalidInterestError(Exception):
         super().__init__(message)
 
 
-class NoBuenoSeriesMuchasGraciasError(Exception):
+class InvalidSeriesError(Exception):
     def __init__(self, message: str) -> None:
         super().__init__(message)

@@ -110,9 +110,9 @@ class Interest:
             )
         return
 
-    def __eq__(self, other: object):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, Interest):
-            return NotImplemented
+            return False
         return (self.annual_effective_interest == other.annual_effective_interest) and (
             self.periodic_interest == other.periodic_interest
         )

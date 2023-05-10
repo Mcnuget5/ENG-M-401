@@ -6,14 +6,14 @@ Represents a series of arbitrary payments per time step with constant interest.
 from __future__ import annotations
 
 import sympy
-from typing import get_args
+from typing import get_args, Optional
 
 from eng_m.core.interest import Interest
 
-from eng_m.util.types import expression, optional, numeric, unsolved
+from eng_m.util.types import expression, numeric, unsolved
 from eng_m.util.exceptions import (
     InvalidInterestError,
-    NoBuenoSeriesMuchasGraciasError,
+    InvalidSeriesError,
 )
 
 
@@ -38,7 +38,7 @@ class Series:
 
     @property
     def irr(self):
-        return NotImplemented
+        raise NotImplementedError()
 
     @property
     def eaw(self) -> expression:
@@ -107,7 +107,7 @@ class Series:
                 "per year"
             )
         if self.compounds != other.compounds:
-            raise NoBuenoSeriesMuchasGraciasError("series unequal compounds per year")
+            raise InvalidSeriesError("series unequal compounds per year")
         return Series(
             self.payments + other.payments,
             interest=self.interest,
@@ -174,7 +174,7 @@ class Series:
             if isinstance(j, get_args(unsolved)):
                 self.payments[i] = j.subs(subs)  # type: ignore
 
-    def zero(self, symbol: sympy.Symbol) -> optional:
+    def zero(self, symbol: sympy.Symbol) -> Optional[numeric]:
         """
         Finds a value for the variable in this payment series such that its
         npv == nfv == 0. If there exists no solution, return None.
@@ -210,7 +210,7 @@ class Series:
                 "per year"
             )
         if len(self) != len(other):
-            raise NoBuenoSeriesMuchasGraciasError("added series must be of same length")
+            raise InvalidSeriesError("added series must be of same length")
         return Series(
             payment=[self.payments[i] + other.payments[i] for i in range(len(self))],
             interest=self.interest,
