@@ -12,7 +12,7 @@ Thankfully we have something to do the work for us.
 
 ## Installation
 
-`pip install eng-m
+`pip install eng-m`
 
 ## Documentation
 
