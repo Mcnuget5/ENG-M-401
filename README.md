@@ -12,7 +12,7 @@ Thankfully we have something to do the work for us.
 
 ## Installation
 
-`pip install git+https://github.com/Mcnuget5/ENG-M-401`
+`pip install eng-m
 
 ## Documentation
 
